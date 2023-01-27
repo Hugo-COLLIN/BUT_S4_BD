@@ -7,6 +7,6 @@ use \Illuminate\Database\Eloquent as Eloq;
 class Jouer extends Eloq\Model
 {
     protected $table = 'jouer';
-    protected $primaryKey = 'id';
+    protected $primaryKey = ['numMatch', 'numJoueur'];
     public $timestamps = false;
 }
