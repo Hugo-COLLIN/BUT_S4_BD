@@ -1,5 +1,6 @@
 #intelliJ
 .idea
+*/.idea
 .out
 out
 .target
