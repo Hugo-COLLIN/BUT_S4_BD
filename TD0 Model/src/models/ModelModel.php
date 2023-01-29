@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+namespace ns\models;
 
 use \Illuminate\Database\Eloquent as Eloq;
 
