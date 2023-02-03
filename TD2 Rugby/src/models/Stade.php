@@ -10,4 +10,9 @@ class Stade extends Eloq\Model
     protected $table = 'stade';
     protected $primaryKey = 'numStade';
     public $timestamps = false;
+
+    public function match(): Eloq\Relations\HasMany
+    {
+        return $this->hasMany("rugby\models\Match", "numStade");
+    }
 }

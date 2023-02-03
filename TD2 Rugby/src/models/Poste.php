@@ -10,4 +10,9 @@ class Poste extends Eloq\Model
     protected $table = 'poste';
     protected $primaryKey = 'numero';
     public $timestamps = false;
+
+    public function joueur(): Eloq\Relations\HasMany
+    {
+        return $this->hasMany("rugby\models\Joueur", "numero");
+    }
 }

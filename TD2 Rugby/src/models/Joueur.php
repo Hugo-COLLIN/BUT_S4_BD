@@ -10,4 +10,20 @@ class Joueur extends Eloq\Model
     protected $table = 'joueur';
     protected $primaryKey = 'numJoueur';
     public $timestamps = false;
+
+    public function joueur(): Eloq\Relations\BelongsTo
+    {
+        return $this->belongsTo("rugby\models\Equipe", "codeEquipe");
+    }
+
+    public function poste(): Eloq\Relations\BelongsTo
+    {
+        return $this->belongsTo("rugby\models\Poste", "numPoste");
+    }
+
+    public function jouerMatch(): Eloq\Relations\BelongsToMany
+    {
+        return $this->belongsToMany("rugby\models\Match", "rugby\models\Jouer", "numJoueur", "numMatch");
+    }
+
 }
