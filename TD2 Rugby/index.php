@@ -21,7 +21,7 @@ $db->addConnection(parse_ini_file('src/conf/conf.ini'));
 $db->setAsGlobal();
 $db->bootEloquent();
 
-//Q1
+//4a
 /*
 $gets = [Arbitre::get(),
     Arbitrer::get(),
@@ -98,5 +98,6 @@ foreach ($match as $m) {
 echo "</ul>";
 
 
-//Q2
+//4b
+
 
