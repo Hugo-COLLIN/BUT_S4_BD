@@ -1,6 +1,6 @@
 import java.sql.*;
 
-class Prog1 {
+class Prog5 {
     public static void main(String[] args) throws ClassNotFoundException, SQLException
     {
         Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -28,6 +28,20 @@ class Prog1 {
             // Création de la table ETUDIANT
             st1.executeQuery(sql1);
 
+            // Insérer un tuple différent dans ETUDIANT
+            st1.executeQuery(sql2);
+
+            //Validation
+            con1.commit();
+
+            // lancer select * from ETUDIANT;
+            ResultSet rs3 = st1.executeQuery(sql3);
+            while (rs3.next())
+                System.out.println(
+                        rs3.getString(1) + "\t" +
+                        rs3.getString(2) + "\t" +
+                        rs3.getString(3) + "\t"
+                );
             System.out.println("--------------------");
         }
         catch (Exception e)
@@ -41,6 +55,9 @@ class Prog1 {
             con2.setAutoCommit(false);
 
             Statement st2 = con2.createStatement();
+
+            // Insérer un tuple différent dans ETUDIANT
+            st2.executeQuery(sql4);
 
             // lancer select * from ETUDIANT;
             ResultSet rs = st2.executeQuery(sql3);
@@ -63,8 +80,8 @@ class Prog1 {
         try
         {
             //Retirer les verrous
-            //con1.rollback();
-            //con2.rollback();
+            con1.rollback();
+            con2.rollback();
 
             con0.setAutoCommit(false);
             Statement st0 = con0.createStatement();
@@ -77,8 +94,8 @@ class Prog1 {
         }
         con0.close();
 
+
         con1.close();
         con2.close();
-
     }
 }

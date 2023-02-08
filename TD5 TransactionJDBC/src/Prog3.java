@@ -14,10 +14,14 @@ class Prog3 {
 
 
         Connection con1 = DriverManager.getConnection(url, args[0], args[1]);
+        Connection con2 = DriverManager.getConnection(url, args[0], args[1]);
+
         try
         {
+            //--- CONNEXION 1 ---
             System.out.println("--------con1--------");
             con1.setAutoCommit(false);
+            con1.rollback();
 
             Statement st1 = con1.createStatement();
             //st1.executeQuery(sql0);
@@ -46,12 +50,11 @@ class Prog3 {
             e.printStackTrace();
         }
 
-        Connection con2 = DriverManager.getConnection(url, args[0], args[1]);
-
-        try
-        {
+        //--- CONNEXION 2 ---
+        try {
             System.out.println("--------con2--------");
             con2.setAutoCommit(false);
+            con2.rollback();
 
             Statement st2 = con2.createStatement();
 
@@ -63,18 +66,36 @@ class Prog3 {
             while (rs.next())
                 System.out.println(
                         rs.getString(1) + "\t" +
-                        rs.getString(2) + "\t" +
-                        rs.getString(3) + "\t"
-                        );
+                                rs.getString(2) + "\t" +
+                                rs.getString(3) + "\t"
+                );
             System.out.println("--------------------");
-
-            //supprimer la table etduiant
-            st2.executeQuery(sql0);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+
+
+        //--- Annuler les modifiactions sur la base ---
+        Connection con0 = DriverManager.getConnection(url, args[0], args[1]);
+        try
+        {
+            //Retirer les verrous
+            con1.rollback();
+            con2.rollback();
+
+            con0.setAutoCommit(false);
+            Statement st0 = con0.createStatement();
+            //supprimer la table etudiant
+            st0.execute(sql0);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        con0.close();
+
 
         con1.close();
         con2.close();

@@ -1,6 +1,6 @@
 import java.sql.*;
 
-class Prog1 {
+class Prog9 {
     public static void main(String[] args) throws ClassNotFoundException, SQLException
     {
         Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -34,6 +34,7 @@ class Prog1 {
         {
             e.printStackTrace();
         }
+        con1.close();
 
         //--- CONNEXION 2 ---
         try {
@@ -56,6 +57,7 @@ class Prog1 {
         {
             e.printStackTrace();
         }
+        con2.close();
 
 
         //--- Annuler les modifiactions sur la base ---
@@ -76,9 +78,5 @@ class Prog1 {
             e.printStackTrace();
         }
         con0.close();
-
-        con1.close();
-        con2.close();
-
     }
 }
