@@ -1,6 +1,6 @@
 import java.sql.*;
 
-class ProgEnCours {
+class ProgP {
     public static void main(String[] args) throws ClassNotFoundException, SQLException
     {
         Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -14,8 +14,11 @@ class ProgEnCours {
 
 
         Connection con1 = DriverManager.getConnection(url, args[0], args[1]);
+        Connection con2 = DriverManager.getConnection(url, args[0], args[1]);
+
         try
         {
+            //--- CONNEXION 1 ---
             System.out.println("--------con1--------");
             con1.setAutoCommit(false);
 
@@ -25,19 +28,28 @@ class ProgEnCours {
             // Création de la table ETUDIANT
             st1.executeQuery(sql1);
 
-            // Insérer un tuple différent dans ETUDIANT
-            st1.executeQuery(sql2);
+            System.out.println("--------------------");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        con1.close();
 
-            //annulation
-            con1.rollback();
+        //--- CONNEXION 2 ---
+        try {
+            System.out.println("--------con2--------");
+            con2.setAutoCommit(false);
+
+            Statement st2 = con2.createStatement();
 
             // lancer select * from ETUDIANT;
-            ResultSet rs3 = st1.executeQuery(sql3);
-            while (rs3.next())
+            ResultSet rs = st2.executeQuery(sql3);
+            while (rs.next())
                 System.out.println(
-                        rs3.getString(1) + "\t" +
-                        rs3.getString(2) + "\t" +
-                        rs3.getString(3) + "\t"
+                        rs.getString(1) + "\t" +
+                                rs.getString(2) + "\t" +
+                                rs.getString(3) + "\t"
                 );
             System.out.println("--------------------");
         }
@@ -45,38 +57,26 @@ class ProgEnCours {
         {
             e.printStackTrace();
         }
+        con2.close();
 
-        Connection con2 = DriverManager.getConnection(url, args[0], args[1]);
 
+        //--- Annuler les modifiactions sur la base ---
+        Connection con0 = DriverManager.getConnection(url, args[0], args[1]);
         try
         {
-            System.out.println("--------con2--------");
-            con2.setAutoCommit(false);
+            //Retirer les verrous
+            //con1.rollback();
+            //con2.rollback();
 
-            Statement st2 = con2.createStatement();
-
-            // Insérer un tuple différent dans ETUDIANT
-            st2.executeQuery(sql4);
-
-            // lancer select * from ETUDIANT;
-            ResultSet rs = st2.executeQuery(sql3);
-            while (rs.next())
-                System.out.println(
-                        rs.getString(1) + "\t" +
-                        rs.getString(2) + "\t" +
-                        rs.getString(3) + "\t"
-                        );
-            System.out.println("--------------------");
-
-            //supprimer la table etduiant
-            st2.executeQuery(sql0);
+            con0.setAutoCommit(false);
+            Statement st0 = con0.createStatement();
+            //supprimer la table etudiant
+            st0.execute(sql0);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        con1.close();
-        con2.close();
+        con0.close();
     }
 }
