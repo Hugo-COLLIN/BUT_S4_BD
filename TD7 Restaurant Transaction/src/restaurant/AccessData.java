@@ -26,31 +26,38 @@ public class AccessData
     /*
     --- LOGIC METHODS ---
      */
-    public boolean loginUser(String login, String password) {
+    public int loginUser(String login, String password) {
         try {
-            this.pst = this.co.prepareStatement("SELECT * FROM Utilisateur WHERE login = ? AND password = ?", TYPE, MODE);
+            this.pst = this.co.prepareStatement("SELECT * FROM Serveur WHERE email = ? AND passwd = ?", TYPE, MODE);
             this.pstSet(pst, new String[]{login, password});
             ResultSet rs = this.pst.executeQuery();
-            return rs.next();
+            if (rs.next())
+            {
+                if (rs.getString(5).equals("gestionnaire"))
+                    return 2;
+                return 1;
+            }
+            return 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return 0;
         }
     }
 
     /*
     --- FEATURES --
      */
-    public String listVehic(String categ, String stDate, String endDate) throws SQLException
+    public String listTables(String date, String time) throws SQLException
     {
-        this.pst = this.co.prepareStatement("SELECT distinct Vehicule.no_imm, Vehicule.modele \n" +
-                "FROM Vehicule, Dossier\n" +
-                "WHERE code_categ = ?\n" +
-                "    AND (date_retrait < ? OR dossier.date_retour > ?)\n" +
-                "    AND Vehicule.no_imm = Dossier.no_imm",
+        this.pst = this.co.prepareStatement("SELECT t1.numtab FROM tabl t1\n" +
+                        "MINUS\n" +
+                        "SELECT t2.numtab FROM tabl t2\n" +
+                        "INNER JOIN Reservation\n" +
+                        "ON Reservation.numtab = t2.numTab\n" +
+                        "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n",
                 TYPE, MODE);
 
-        this.pstSet(pst, new String[]{categ, stDate, endDate});
+        this.pstSet(pst, new String[]{date + " " + time});
         return this.displayPst();
     }
 
