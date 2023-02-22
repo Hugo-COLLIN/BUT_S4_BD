@@ -20,17 +20,21 @@ public class AccessData
     public String connection(String lgn, String pwd) throws SQLException {
         String url = "jdbc:oracle:thin:@charlemagne.iutnc.univ-lorraine.fr:1521:infodb";
         this.co = DriverManager.getConnection(url, lgn, pwd);
+        this.co.setAutoCommit(false);
         return "Successfully connected to the database :)";
     }
 
     /*
-    --- LOGIC METHODS ---
+    --- FEATURES --
      */
+    //Identification
     public int loginUser(String login, String password) {
         try {
             this.pst = this.co.prepareStatement("SELECT * FROM Serveur WHERE email = ? AND passwd = ?", TYPE, MODE);
             this.pstSet(pst, new String[]{login, password});
             ResultSet rs = this.pst.executeQuery();
+            this.co.commit();
+
             if (rs.next())
             {
                 if (rs.getString(5).equals("gestionnaire"))
@@ -44,11 +48,10 @@ public class AccessData
         }
     }
 
-    /*
-    --- FEATURES --
-     */
+    //Q1.a
     public String listTables(String date, String time) throws SQLException
     {
+        this.co.commit();
         this.pst = this.co.prepareStatement("SELECT t1.numtab FROM tabl t1\n" +
                         "MINUS\n" +
                         "SELECT t2.numtab FROM tabl t2\n" +
@@ -59,6 +62,33 @@ public class AccessData
 
         this.pstSet(pst, new String[]{date + " " + time});
         return this.displayPst();
+    }
+
+    //Q1.b
+    public String bookTable(String numTable, String date, String time, String nbPers) throws SQLException
+    {
+        String bookingNumber = lastBookingNumber();
+        bookingNumber = String.valueOf(Integer.parseInt(bookingNumber) + 1);
+        this.pst = this.co.prepareStatement("INSERT INTO reservation (numres, numtab, datres, nbpers) VALUES (?,?,to_date(?, 'dd/mm/yyyy hh24:mi'),?)", TYPE, MODE);
+        this.pstSet(pst, new String[]{bookingNumber, numTable, date + " " + time, nbPers});
+        pst.executeUpdate();
+        return this.displayPst();
+    }
+
+    public String lastBookingNumber() throws SQLException
+    {
+        this.st = co.createStatement(TYPE, MODE);
+        ResultSet rs = st.executeQuery("SELECT max(numres) FROM reservation");
+        rs.next();
+        System.out.println(rs.getString(1));
+        return rs.getString(1);
+    }
+
+    public String plateCalendar(String plate) throws SQLException
+    {
+        this.pst = this.co.prepareStatement("SELECT * FROM Calendrier WHERE no_imm = ?", TYPE, MODE);
+        this.pstSet(pst, new String[]{plate});
+        return "Booking calendar for the vehicle with this plate :\n" + this.displayPst();
     }
 
     public String majCal(String plate, String stDate, String endDate, int loc) throws SQLException
@@ -77,12 +107,7 @@ public class AccessData
         return plateCalendar(plate);
     }
 
-    public String plateCalendar(String plate) throws SQLException
-    {
-        this.pst = this.co.prepareStatement("SELECT * FROM Calendrier WHERE no_imm = ?", TYPE, MODE);
-        this.pstSet(pst, new String[]{plate});
-        return "Booking calendar for the vehicle with this plate :\n" + this.displayPst();
-    }
+
 
     public String locAmount(String model, String locDuration) throws SQLException
     {
@@ -98,18 +123,7 @@ public class AccessData
         return this.displayPst();
     }
 
-    public String allCategsAgencies() throws SQLException
-    {
-        this.st = co.createStatement(TYPE, MODE);
-        ResultSet rs = st.executeQuery("SELECT code_ag FROM Vehicule, Categorie\n" +
-                "WHERE categorie.code_categ = vehicule.code_categ\n" +
-                "GROUP BY code_ag\n" +
-                "HAVING count(distinct Categorie.code_categ) = (\n" +
-                "    SELECT count(*) \n" +
-                "    FROM Categorie)");
 
-        return display(rs);
-    }
 
     public String cliList2Models() throws SQLException
     {
@@ -142,6 +156,7 @@ public class AccessData
     public String displayPst() throws SQLException
     {
         ResultSet rs = pst.executeQuery();
+        this.co.commit();
         return display(rs);
     }
 

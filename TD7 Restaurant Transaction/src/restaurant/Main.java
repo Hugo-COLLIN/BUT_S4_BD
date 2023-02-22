@@ -51,6 +51,17 @@ public class Main
                     System.out.println("\n" + ad.listTables(p1,p2));
                     break;
                 case 2:
+                    System.out.print("Table number: ");
+                    p1 = sc.nextLine();
+                    System.out.print("Date (DD/MM/YYYY): ");
+                    p2 = sc.nextLine();
+                    System.out.print("Time (HH:MI): ");
+                    p3 = sc.nextLine();
+                    System.out.print("Number of people: ");
+                    p4 = sc.nextLine();
+                    System.out.println("\n" + ad.bookTable(p1,p2,p3,p4));
+                    break;
+                case -1:
                     System.out.print("Plate: ");
                     p1 = sc.nextLine();
                     System.out.print("Start date (DD/MM/YYYY): ");
@@ -73,7 +84,7 @@ public class Main
                     System.out.println("\n" + ad.locAmount(p1,p2));
                     break;
                 case 4:
-                    System.out.println("\n" + ad.allCategsAgencies());
+                    //System.out.println("\n" + ad.allCategsAgencies());
                     break;
                 case 5:
                     System.out.println("\n" + ad.cliList2Models());
@@ -84,6 +95,8 @@ public class Main
                 default:
                     break;
             }
+            System.out.println("Press any key to continue...");
+            sc.nextLine();
         }
 
     }
