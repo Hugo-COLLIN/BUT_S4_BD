@@ -48,7 +48,7 @@ public class AccessData
         }
     }
 
-    //Q1.a
+    //Q2.a
     public String listTables(String date, String time) throws SQLException
     {
         this.co.commit();
@@ -64,15 +64,17 @@ public class AccessData
         return this.displayPst();
     }
 
-    //Q1.b
+    //Q2.b
     public String bookTable(String numTable, String date, String time, String nbPers) throws SQLException
     {
-        String bookingNumber = lastBookingNumber();
-        bookingNumber = String.valueOf(Integer.parseInt(bookingNumber) + 1);
+        int bookingNumber = Integer.parseInt(lastBookingNumber());
+        bookingNumber++;
+        System.out.println(bookingNumber);
         this.pst = this.co.prepareStatement("INSERT INTO reservation (numres, numtab, datres, nbpers) VALUES (?,?,to_date(?, 'dd/mm/yyyy hh24:mi'),?)", TYPE, MODE);
-        this.pstSet(pst, new String[]{bookingNumber, numTable, date + " " + time, nbPers});
+        this.pstSet(pst, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
         pst.executeUpdate();
-        return this.displayPst();
+        this.co.commit();
+        return "Ok, table booked !";
     }
 
     public String lastBookingNumber() throws SQLException
@@ -80,8 +82,21 @@ public class AccessData
         this.st = co.createStatement(TYPE, MODE);
         ResultSet rs = st.executeQuery("SELECT max(numres) FROM reservation");
         rs.next();
-        System.out.println(rs.getString(1));
         return rs.getString(1);
+    }
+
+    //Q2.c
+    public String cliList2Models() throws SQLException
+    {
+        this.st = co.createStatement(TYPE, MODE);
+        ResultSet rs = st.executeQuery("SELECT nom, ville, codpostal\n" +
+                "FROM Client, Dossier, Vehicule\n" +
+                "WHERE Client.code_cli = Dossier.code_cli\n" +
+                "    AND Dossier.no_imm = Vehicule.no_imm\n" +
+                "GROUP BY nom, ville, codpostal, modele\n" +
+                "HAVING count(modele) = 2");
+
+        return display(rs);
     }
 
     public String plateCalendar(String plate) throws SQLException
@@ -125,18 +140,7 @@ public class AccessData
 
 
 
-    public String cliList2Models() throws SQLException
-    {
-        this.st = co.createStatement(TYPE, MODE);
-        ResultSet rs = st.executeQuery("SELECT nom, ville, codpostal\n" +
-                "FROM Client, Dossier, Vehicule\n" +
-                "WHERE Client.code_cli = Dossier.code_cli\n" +
-                "    AND Dossier.no_imm = Vehicule.no_imm\n" +
-                "GROUP BY nom, ville, codpostal, modele\n" +
-                "HAVING count(modele) = 2");
 
-        return display(rs);
-    }
 
     /*
     --- DISPLAYING METHODS ---
