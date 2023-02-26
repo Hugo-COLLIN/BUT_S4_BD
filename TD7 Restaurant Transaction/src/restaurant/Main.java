@@ -40,7 +40,7 @@ public class Main
 
             String p1,p2,p3, p4;
             boolean b1;
-            int i1;
+            int i1, i2, i3, i4;
             switch (choice)
             {
                 case 1:
@@ -74,20 +74,28 @@ public class Main
                     }
                     while (i1 != 1 && i1 != 2);
 
-                    System.out.println("\n" + ad.majCal(p1, p2, p3, i1));
+                    //System.out.println("\n" + ad.majCal(p1, p2, p3, i1));
                     break;
                 case 3:
                     System.out.print("Model: ");
                     p1 = sc.nextLine();
                     System.out.print("Location duration: ");
                     p2 = sc.nextLine();
-                    System.out.println("\n" + ad.locAmount(p1,p2));
+                    //System.out.println("\n" + ad.locAmount(p1,p2));
                     break;
                 case 4:
-                    //System.out.println("\n" + ad.allCategsAgencies());
+                    System.out.println(ad.listBookings());
+                    System.out.print("Booking number: ");
+                    i1 = sc.nextInt();
+                    System.out.println(ad.listMeals());
+                    System.out.print("Meal number: ");
+                    i2 = sc.nextInt();
+                    System.out.print("Quantity: ");
+                    i3 = sc.nextInt();
+                    System.out.println("\n" + ad.orderMeal(i1,i2,i3));
                     break;
                 case 5:
-                    System.out.println("\n" + ad.cliList2Models());
+                    //System.out.println("\n" + ad.cliList2Models());
                     break;
                 case 0:
                     end = true;

@@ -74,7 +74,7 @@ public class AccessData
         this.pstSet(pst, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
         pst.executeUpdate();
         this.co.commit();
-        return "Ok, table booked !";
+        return "Ok, table booked!";
     }
 
     public String lastBookingNumber() throws SQLException
@@ -86,12 +86,12 @@ public class AccessData
     }
 
     //Q2.c TODO
-    public String listPlats(String date, String time) throws SQLException
+    public String listMeals() throws SQLException
     {
         this.co.commit();
-        this.pst = this.co.prepareStatement("select plat.libelle, plat.qteservie - sum(commande.quantite) AS Quantité_restante from plat\n" +
+        this.pst = this.co.prepareStatement("select plat.numPlat, plat.libelle, plat.qteservie - sum(commande.quantite) AS Quantité_restante from plat\n" +
                         "INNER JOIN commande\n" +
-                        "ON COmmande.numPlat = plat.numPlat\n" +
+                        "ON Commande.numPlat = plat.numPlat\n" +
                         "GROUP BY commande.Numplat, plat.qteservie, plat.libelle",
                 TYPE, MODE);
 
@@ -99,47 +99,27 @@ public class AccessData
         return this.displayPst();
     }
 
-    public String plateCalendar(String plate) throws SQLException
+    //Q2.d
+    public String orderMeal(int numRes, int numPlat, int qte) throws SQLException
     {
-        this.pst = this.co.prepareStatement("SELECT * FROM Calendrier WHERE no_imm = ?", TYPE, MODE);
-        this.pstSet(pst, new String[]{plate});
-        return "Booking calendar for the vehicle with this plate :\n" + this.displayPst();
-    }
-
-    public String majCal(String plate, String stDate, String endDate, int loc) throws SQLException
-    {
-        String locParam;
-        this.pst = this.co.prepareStatement("UPDATE Calendrier \n" +
-                "SET paslibre = ?\n" +
-                "WHERE no_imm = ?\n" +
-                "    AND datejour BETWEEN ? AND ?", TYPE, MODE);
-
-        if (loc == 1) locParam = "x";
-        else locParam = null;
-
-        this.pstSet(pst, new String[]{locParam, plate, stDate, endDate});
+        this.pst = this.co.prepareStatement("INSERT INTO Commande VALUES (?, ?, ?)", TYPE, MODE);
+        this.pstSet(pst, new Object[]{numRes, numPlat, qte});
         pst.executeUpdate();
-        return plateCalendar(plate);
+        this.co.commit();
+        return "Ok, dish ordered!";
     }
 
-
-
-    public String locAmount(String model, String locDuration) throws SQLException
+    public String listBookings() throws SQLException
     {
-        this.pst = this.co.prepareStatement("SELECT tarif.code_tarif, tarif_jour * MOD(?,7) + tarif_hebdo * FLOOR(?/7) AS Montant_location \n" +
-                        "FROM tarif\n" +
-                        "WHERE tarif.code_tarif = (\n" +
-                        "    SELECT categorie.code_tarif FROM Vehicule, Categorie\n" +
-                        "    WHERE vehicule.modele = ?\n" +
-                        "        AND Vehicule.code_categ = categorie.code_categ\n)",
+        this.co.commit();
+        this.pst = this.co.prepareStatement("select * from reservation",
                 TYPE, MODE);
 
-        this.pstSet(pst, new String[]{locDuration, locDuration, model});
+        //this.pstSet(pst, new String[]{date + " " + time});
         return this.displayPst();
     }
 
-
-
+    //Q3.a
 
 
     /*
