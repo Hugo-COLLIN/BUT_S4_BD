@@ -85,18 +85,18 @@ public class AccessData
         return rs.getString(1);
     }
 
-    //Q2.c
-    public String cliList2Models() throws SQLException
+    //Q2.c TODO
+    public String listPlats(String date, String time) throws SQLException
     {
-        this.st = co.createStatement(TYPE, MODE);
-        ResultSet rs = st.executeQuery("SELECT nom, ville, codpostal\n" +
-                "FROM Client, Dossier, Vehicule\n" +
-                "WHERE Client.code_cli = Dossier.code_cli\n" +
-                "    AND Dossier.no_imm = Vehicule.no_imm\n" +
-                "GROUP BY nom, ville, codpostal, modele\n" +
-                "HAVING count(modele) = 2");
+        this.co.commit();
+        this.pst = this.co.prepareStatement("select plat.libelle, plat.qteservie - sum(commande.quantite) AS Quantité_restante from plat\n" +
+                        "INNER JOIN commande\n" +
+                        "ON COmmande.numPlat = plat.numPlat\n" +
+                        "GROUP BY commande.Numplat, plat.qteservie, plat.libelle",
+                TYPE, MODE);
 
-        return display(rs);
+        //this.pstSet(pst, new String[]{date + " " + time});
+        return this.displayPst();
     }
 
     public String plateCalendar(String plate) throws SQLException
