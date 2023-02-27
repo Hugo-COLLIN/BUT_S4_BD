@@ -49,28 +49,26 @@ public class AccessData
                 "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n";
         return sj.displaySelect(query, new String[]{date + " " + time});
     }
-/*
+
     //Q2.b
     public String bookTable(String numTable, String date, String time, String nbPers) throws SQLException
     {
         int bookingNumber = Integer.parseInt(lastBookingNumber());
         bookingNumber++;
         System.out.println(bookingNumber);
-        this.pst = this.co.prepareStatement("INSERT INTO reservation (numres, numtab, datres, nbpers) VALUES (?,?,to_date(?, 'dd/mm/yyyy hh24:mi'),?)", TYPE, MODE);
-        this.pstSet(pst, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
-        pst.executeUpdate();
-        this.co.commit();
+        String query = "INSERT INTO reservation (numres, numtab, datres, nbpers) VALUES (?, ?, to_date(?, 'dd/mm/yyyy hh24:mi'), ?)";
+        sj.update(query, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
         return "Ok, table booked!";
     }
 
     public String lastBookingNumber() throws SQLException
     {
-        this.st = co.createStatement(TYPE, MODE);
-        ResultSet rs = st.executeQuery("SELECT max(numres) FROM reservation");
+        String query = "SELECT max(numres) FROM reservation";
+        ResultSet rs = sj.resultSelect(query, new String[]{});
         rs.next();
         return rs.getString(1);
     }
-
+/*
     //Q2.c TODO
     public String listMeals() throws SQLException
     {

@@ -1,6 +1,10 @@
 package restaurant;
 import java.sql.*;
 
+/**
+ * SimplerJDBC library
+ * Hugo COLLIN, 27/02/2023
+ */
 public class SimplerJDBC
 {
     private Connection co;
@@ -27,20 +31,30 @@ public class SimplerJDBC
      */
     public String displaySelect(String query, Object[] params) throws SQLException
     {
-        this.co.commit();
-        this.pst = co.prepareStatement(query, TYPE, MODE);
-        for (int i = 0 ; i < params.length ; i ++)
-            this.pst.setObject(i + 1, params[i]);
-        return this.displayPst();
+        return this.display(resultSelect(query, params));
     }
 
     public ResultSet resultSelect(String query, Object[] params) throws SQLException
     {
+        this.query(query, params);
+        ResultSet rs = this.pst.executeQuery();
         this.co.commit();
+        return rs;
+    }
+
+    public String update(String query, Object[] params) throws SQLException
+    {
+        this.query(query, params);
+        this.pst.executeUpdate();
+        this.co.commit();
+        return "Update done";
+    }
+
+    public void query(String query, Object[] params) throws SQLException
+    {
         this.pst = co.prepareStatement(query, TYPE, MODE);
         for (int i = 0 ; i < params.length ; i ++)
             this.pst.setObject(i + 1, params[i]);
-        return this.pst.executeQuery();
     }
 
     /*

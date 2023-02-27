@@ -58,7 +58,7 @@ public class Main
                     p3 = sc.nextLine();
                     System.out.print("Number of people: ");
                     p4 = sc.nextLine();
-                    //System.out.println("\n" + ad.bookTable(p1,p2,p3,p4));
+                    System.out.println("\n" + ad.bookTable(p1,p2,p3,p4));
                     break;
                 case -1:
                     System.out.print("Plate: ");
