@@ -169,5 +169,111 @@ public class AccessData
      */
 
     //Q3.c
+    public String updateMealLabel(int numPlat, String libelle) throws SQLException
+    {
+        String query = "UPDATE Plat\n" +
+                "SET libelle = ?\n" +
+                "WHERE numPlat = ?";
+        sj.update(query, new Object[]{libelle, numPlat});
+        return "Ok, server email updated!";
+    }
 
+    public String updateMealType(int numPlat, String type) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET type = ?\n" +
+                "WHERE numPlat = ?";
+        sj.update(query, new Object[]{type, numPlat});
+        return "Ok, server name updated!";
+    }
+
+    public String updateMealPrice(int numPlat, String price) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET passwd = ?\n" +
+                "WHERE numPlat = ?";
+        sj.update(query, new Object[]{price, numPlat});
+        return "Ok, server password updated!";
+    }
+
+    public String updateMealServedQuantity(int numPlat, String qteservie) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET passwd = ?\n" +
+                "WHERE numPlat = ?";
+        sj.update(query, new Object[]{qteservie, numPlat});
+        return "Ok, server password updated!";
+    }
+
+    public String newMeal(String libelle, String type, int prixunit, int qteservie) throws SQLException
+    {
+        int numPlat = Integer.parseInt(lastMealNumber());
+        numPlat ++;
+        System.out.println(numPlat);
+        String query = "INSERT INTO Plat VALUES (?, ?, ?)";
+        sj.update(query, new Object[]{numPlat, libelle,type, prixunit, qteservie});
+        return "Ok, server added!";
+    }
+
+    private String lastMealNumber() throws SQLException {
+        String query = "SELECT max(numPlat) FROM Plat";
+        return sj.unique(query);
+    }
+
+    //Q3.d
+    public String bookingAmount(int numRes) throws SQLException
+    {
+        String query = """
+                SELECT sum(plat.prixUnit * commande.quantite) FROM reservation
+                INNER JOIN Commande ON Reservation.numRes = commande.numres
+                INNER JOIN Plat ON commande.numplat = plat.numPlat
+                WHERE Reservation.numRes = ?
+                """;
+        return sj.select(query, new Object[]{numRes});
+    }
+
+    public String updateBookingAmount(int numRes) throws SQLException
+    {
+        String query = """
+                UPDATE reservation
+                SET montcom = ?
+                WHERE Reservation.numRes = ?
+                """;
+        sj.update(query, new Object[]{bookingAmount(numRes), numRes});
+        return "Ok, booking amount updated!";
+    }
+
+    //Q3.e
+    public String listOrdersByWaiter(String startDate, String endDate) throws SQLException
+    {
+        String query = """
+                SELECT serveur.nomserv, sum(plat.prixunit * commande.quantite) AS Chiffre_DAffaire, count(*) AS Nb_Commandes FROM Serveur
+                INNER JOIN Affecter ON serveur.numserv = affecter.numServ
+                INNER JOIN Reservation ON affecter.numtab = reservation.numtab
+                INNER JOIN Commande ON commande.numres = reservation.numres
+                INNER JOIN Plat ON plat.numPlat = commande.numplat
+                WHERE reservation.datres >= TO_DATE(?, 'DD/MM/YYYY')
+                    AND reservation.datres <= TO_DATE(?, 'DD/MM/YYYY')
+                GROUP BY Serveur.nomServ, Serveur.numServ
+                """;
+        return sj.select(query, new Object[]{startDate, endDate});
+    }
+
+    //Q3.f
+public String listOrdersByTable(String startDate, String endDate) throws SQLException
+    {
+        String query = """
+                 SELECT serveur.nomServ FROM Serveur
+                 MINUS
+                 SELECT serveur.nomServ FROM Serveur
+                 INNER JOIN Affecter ON serveur.numserv = affecter.numServ
+                 INNER JOIN Reservation ON affecter.numtab = reservation.numtab
+                 INNER JOIN Commande ON commande.numres = reservation.numres
+                 INNER JOIN Plat ON plat.numPlat = commande.numplat
+                 WHERE reservation.datres >= TO_DATE(?, 'DD/MM/YYYY')
+                     AND reservation.datres <= TO_DATE(?, 'DD/MM/YYYY')
+                 GROUP BY Serveur.nomServ, Serveur.numServ
+                """;
+        return sj.select(query, new Object[]{startDate, endDate});
+    }
 }
