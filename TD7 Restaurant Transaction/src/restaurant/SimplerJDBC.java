@@ -57,6 +57,13 @@ public class SimplerJDBC
             this.pst.setObject(i + 1, params[i]);
     }
 
+    public String unique(String query) throws SQLException
+    {
+        ResultSet rs = this.resultSelect(query, new Object[]{});
+        rs.last();
+        return rs.getString(1);
+    }
+
     /*
     --- DISPLAYING METHODS ---
      */
