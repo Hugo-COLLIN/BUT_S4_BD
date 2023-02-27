@@ -64,9 +64,7 @@ public class AccessData
     public String lastBookingNumber() throws SQLException
     {
         String query = "SELECT max(numres) FROM reservation";
-        ResultSet rs = sj.resultSelect(query, new String[]{});
-        rs.next();
-        return rs.getString(1);
+        return sj.unique(query);
     }
 
     //Q2.c TODO
@@ -94,12 +92,58 @@ public class AccessData
     }
 
     //Q3.a
-    public String listServeurs() throws SQLException
+    public String listServers() throws SQLException
     {
         String query = "SELECT * FROM Serveur\n" +
                 "WHERE grade = 'serveur'";
         return sj.select(query, new String[]{});
     }
+
+    public String updateServerEmail(int numServ, String email) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET email = ?\n" +
+                "WHERE numServ = ?\n" +
+                "AND grade = 'serveur';";
+        sj.update(query, new Object[]{email, numServ});
+        return "Ok, server email updated!";
+    }
+
+    public String updateServerName(int numServ, String name) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET nomServ = ?\n" +
+                "WHERE numServ = ?\n" +
+                "AND grade = 'serveur';";
+        sj.update(query, new Object[]{name, numServ});
+        return "Ok, server name updated!";
+    }
+
+    public String updateServerPassword(int numServ, String password) throws SQLException
+    {
+        String query = "UPDATE Serveur\n" +
+                "SET passwd = ?\n" +
+                "WHERE numServ = ?\n" +
+                "AND grade = 'serveur';";
+        sj.update(query, new Object[]{password, numServ});
+        return "Ok, server password updated!";
+    }
+
+    public String newServer(String name, String email, String password) throws SQLException
+    {
+        int numServ = Integer.parseInt(lastServerNumber());
+        numServ++;
+        System.out.println(numServ);
+        String query = "INSERT INTO Serveur (numServ, nomServ, email, passwd, grade) VALUES (?, ?, ?, ?, 'serveur')";
+        sj.update(query, new Object[]{numServ, name, email, password});
+        return "Ok, server added!";
+    }
+
+    private String lastServerNumber() throws SQLException {
+        String query = "SELECT max(numServ) FROM Serveur";
+        return sj.unique(query);
+    }
+
 
 
     //Q3.b
