@@ -3,25 +3,17 @@ import java.sql.*;
 
 public class AccessData
 {
-    private Connection co;
-    private Statement st;
-    private PreparedStatement pst;
-    private final int TYPE = ResultSet.TYPE_SCROLL_INSENSITIVE;
-    private final int MODE = ResultSet.CONCUR_UPDATABLE;
+    private SimplerJDBC sj;
 
-    /*
-    --- SYSTEM METHODS ---
-     */
-    public String loadDriver() throws ClassNotFoundException {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-        return "Driver loaded";
+    public AccessData() {
+        this.sj = new SimplerJDBC();
     }
 
-    public String connection(String lgn, String pwd) throws SQLException {
+    public String connection(String lgn, String pwd) throws SQLException, ClassNotFoundException
+    {
         String url = "jdbc:oracle:thin:@charlemagne.iutnc.univ-lorraine.fr:1521:infodb";
-        this.co = DriverManager.getConnection(url, lgn, pwd);
-        this.co.setAutoCommit(false);
-        return "Successfully connected to the database :)";
+        return sj.loadDriver() +
+                sj.connect(url, lgn, pwd);
     }
 
     /*
@@ -30,10 +22,8 @@ public class AccessData
     //Identification
     public int loginUser(String login, String password) {
         try {
-            this.pst = this.co.prepareStatement("SELECT * FROM Serveur WHERE email = ? AND passwd = ?", TYPE, MODE);
-            this.pstSet(pst, new String[]{login, password});
-            ResultSet rs = this.pst.executeQuery();
-            this.co.commit();
+            String query = "SELECT * FROM Serveur WHERE email = ? AND passwd = ?";
+            ResultSet rs = sj.resultSelect(query, new String[]{login, password});
 
             if (rs.next())
             {
@@ -50,27 +40,16 @@ public class AccessData
 
     //Q2.a
     public String listTables(String date, String time) throws SQLException
-    {/*
-        this.co.commit();
-        this.pst = this.co.prepareStatement("SELECT t1.numtab FROM tabl t1\n" +
-                        "MINUS\n" +
-                        "SELECT t2.numtab FROM tabl t2\n" +
-                        "INNER JOIN Reservation\n" +
-                        "ON Reservation.numtab = t2.numTab\n" +
-                        "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n",
-                TYPE, MODE);
-
-        this.pstSet(pst, new String[]{date + " " + time});
-        return this.displayPst();*/
+    {
         String query = "SELECT t1.numtab FROM tabl t1\n" +
                 "MINUS\n" +
                 "SELECT t2.numtab FROM tabl t2\n" +
                 "INNER JOIN Reservation\n" +
                 "ON Reservation.numtab = t2.numTab\n" +
                 "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n";
-        return selectQuery(query, new String[]{date + " " + time});
+        return sj.displaySelect(query, new String[]{date + " " + time});
     }
-
+/*
     //Q2.b
     public String bookTable(String numTable, String date, String time, String nbPers) throws SQLException
     {
@@ -128,76 +107,5 @@ public class AccessData
 
     //Q3.a
 
-
-    /*
-    --- QUERIES METHODS ---
-     */
-    public String selectQuery(String query, Object[] params) throws SQLException
-    {
-        this.co.commit();
-        this.pst = co.prepareStatement(query, TYPE, MODE);
-        for (int i = 0 ; i < params.length ; i ++)
-            this.pst.setObject(i + 1, params[i]);
-        return this.displayPst();
-    }
-
-    /*
-    --- DISPLAYING METHODS ---
-     */
-    public String display(ResultSet rs) throws SQLException
-    {
-        ResultSetMetaData rSMeta = rs.getMetaData();
-        final int NUM = rSMeta.getColumnCount();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(showColsName(rSMeta, NUM));
-        while (rs.next())
-            sb.append(showRow(rs, NUM));
-        return sb.toString();
-    }
-
-    public String displayPst() throws SQLException
-    {
-        ResultSet rs = pst.executeQuery();
-        this.co.commit();
-        return display(rs);
-    }
-
-    public void pstSet(PreparedStatement pst, Object[] params) throws SQLException
-    {
-        for (int i = 0 ; i < params.length ; i ++)
-            pst.setObject(i + 1, params[i]);
-    }
-
-    public String showRow(ResultSet rS, final int NUM) throws SQLException
-    {
-        StringBuilder res = new StringBuilder();
-        for (int i = 1; i <= NUM ; i ++)
-            res.append(rS.getString(i) + "\t");
-        res.append("\n");
-        return res.toString();
-    }
-
-    public String showColsName(ResultSetMetaData rSMeta, final int NUM) throws SQLException
-    {
-        StringBuilder res = new StringBuilder();
-        for (int i = 1; i <= NUM ; i ++)
-            res.append(rSMeta.getColumnName(i) + "\t");
-        res.append("\n");
-        return res.toString();
-    }
-
-    /*
-    --- GETTERS, SETTERS ANS REDEFINITIONS ---
-     */
-    @Override
-    public String toString() {
-        return "AccessData{" +
-                "co=" + co +
-                ", st=" + st +
-                ", pst=" + pst +
-                ", TYPE=" + TYPE +
-                ", MODE=" + MODE +
-                '}';
-    }
+*/
 }
