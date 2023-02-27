@@ -147,4 +147,27 @@ public class AccessData
 
 
     //Q3.b
+    public String listTables() throws SQLException
+    {
+        String query = "SELECT * FROM Tabl";
+        return sj.select(query, new String[]{});
+    }
+
+    public String assign(int numServ, int numTab, String dataff) throws SQLException
+    {
+        String query = "INSERT INTO Affectation (numServ, numTab, dataff) VALUES (?, ?, ?)";
+        sj.update(query, new Object[]{numServ, numTab, dataff});
+        return "Ok, server assigned to a table!";
+    }
+
+    /*
+    public String listAssignments() throws SQLException
+    {
+        String query = "SELECT * FROM Affectation";
+        return sj.select(query, new String[]{});
+    }
+     */
+
+    //Q3.c
+
 }
