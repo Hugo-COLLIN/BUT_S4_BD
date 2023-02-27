@@ -50,7 +50,7 @@ public class AccessData
 
     //Q2.a
     public String listTables(String date, String time) throws SQLException
-    {
+    {/*
         this.co.commit();
         this.pst = this.co.prepareStatement("SELECT t1.numtab FROM tabl t1\n" +
                         "MINUS\n" +
@@ -61,7 +61,14 @@ public class AccessData
                 TYPE, MODE);
 
         this.pstSet(pst, new String[]{date + " " + time});
-        return this.displayPst();
+        return this.displayPst();*/
+        String query = "SELECT t1.numtab FROM tabl t1\n" +
+                "MINUS\n" +
+                "SELECT t2.numtab FROM tabl t2\n" +
+                "INNER JOIN Reservation\n" +
+                "ON Reservation.numtab = t2.numTab\n" +
+                "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n";
+        return selectQuery(query, new String[]{date + " " + time});
     }
 
     //Q2.b
@@ -121,6 +128,18 @@ public class AccessData
 
     //Q3.a
 
+
+    /*
+    --- QUERIES METHODS ---
+     */
+    public String selectQuery(String query, Object[] params) throws SQLException
+    {
+        this.co.commit();
+        this.pst = co.prepareStatement(query, TYPE, MODE);
+        for (int i = 0 ; i < params.length ; i ++)
+            this.pst.setObject(i + 1, params[i]);
+        return this.displayPst();
+    }
 
     /*
     --- DISPLAYING METHODS ---
