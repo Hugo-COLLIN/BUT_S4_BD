@@ -76,13 +76,9 @@ public class Main
                     //System.out.println("\n" + ad.majCal(p1, p2, p3, i1));
                     break;
                 case 3:
-                    System.out.print("Model: ");
-                    p1 = sc.nextLine();
-                    System.out.print("Location duration: ");
-                    p2 = sc.nextLine();
-                    //System.out.println("\n" + ad.locAmount(p1,p2));
+                    System.out.println(ad.listBookings());
                     break;
-                case 4:/*
+                case 4:
                     System.out.println(ad.listBookings());
                     System.out.print("Booking number: ");
                     i1 = sc.nextInt();
@@ -92,7 +88,7 @@ public class Main
                     System.out.print("Quantity: ");
                     i3 = sc.nextInt();
                     System.out.println("\n" + ad.orderMeal(i1,i2,i3));
-                    break;*/
+                    break;
                 case 5:
                     //System.out.println("\n" + ad.cliList2Models());
                     break;

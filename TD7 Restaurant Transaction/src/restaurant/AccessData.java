@@ -47,7 +47,7 @@ public class AccessData
                 "INNER JOIN Reservation\n" +
                 "ON Reservation.numtab = t2.numTab\n" +
                 "WHERE to_char(datres, 'dd/mm/yyyy hh24:mi') = ?\n";
-        return sj.displaySelect(query, new String[]{date + " " + time});
+        return sj.select(query, new String[]{date + " " + time});
     }
 
     //Q2.b
@@ -68,42 +68,39 @@ public class AccessData
         rs.next();
         return rs.getString(1);
     }
-/*
+
     //Q2.c TODO
     public String listMeals() throws SQLException
     {
-        this.co.commit();
-        this.pst = this.co.prepareStatement("select plat.numPlat, plat.libelle, plat.qteservie - sum(commande.quantite) AS Quantité_restante from plat\n" +
-                        "INNER JOIN commande\n" +
-                        "ON Commande.numPlat = plat.numPlat\n" +
-                        "GROUP BY commande.Numplat, plat.qteservie, plat.libelle",
-                TYPE, MODE);
-
-        //this.pstSet(pst, new String[]{date + " " + time});
-        return this.displayPst();
+        String query = "select plat.numPlat, plat.libelle, plat.qteservie - sum(commande.quantite) AS Quantité_restante from plat\n" +
+                "INNER JOIN commande\n" +
+                "ON Commande.numPlat = plat.numPlat\n" +
+                "GROUP BY plat.Numplat, plat.qteservie, plat.libelle";
+        return sj.select(query, new String[]{});
     }
 
     //Q2.d
     public String orderMeal(int numRes, int numPlat, int qte) throws SQLException
     {
-        this.pst = this.co.prepareStatement("INSERT INTO Commande VALUES (?, ?, ?)", TYPE, MODE);
-        this.pstSet(pst, new Object[]{numRes, numPlat, qte});
-        pst.executeUpdate();
-        this.co.commit();
-        return "Ok, dish ordered!";
+        String query = "INSERT INTO Commande (numRes, numPlat, quantite) VALUES (?, ?, ?)";
+        sj.update(query, new Object[]{numRes, numPlat, qte});
+        return "Ok, meal ordered!";
     }
 
     public String listBookings() throws SQLException
     {
-        this.co.commit();
-        this.pst = this.co.prepareStatement("select * from reservation",
-                TYPE, MODE);
-
-        //this.pstSet(pst, new String[]{date + " " + time});
-        return this.displayPst();
+        String query = "SELECT * FROM reservation";
+        return sj.select(query, new String[]{});
     }
 
     //Q3.a
+    public String listServeurs() throws SQLException
+    {
+        String query = "SELECT * FROM Serveur\n" +
+                "WHERE grade = 'serveur'";
+        return sj.select(query, new String[]{});
+    }
 
-*/
+
+    //Q3.b
 }

@@ -2,7 +2,7 @@ package restaurant;
 import java.sql.*;
 
 /**
- * SimplerJDBC library
+ * SimplerJDBC
  * Hugo COLLIN, 27/02/2023
  */
 public class SimplerJDBC
@@ -29,7 +29,7 @@ public class SimplerJDBC
     /*
     --- QUERIES METHODS ---
      */
-    public String displaySelect(String query, Object[] params) throws SQLException
+    public String select(String query, Object[] params) throws SQLException
     {
         return this.display(resultSelect(query, params));
     }
