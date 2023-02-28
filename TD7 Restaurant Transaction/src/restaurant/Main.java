@@ -21,7 +21,7 @@ public class Main
             String password = sc.nextLine();
             logged = ad.loginUser(login, password);
         }
-        System.out.println(logged);
+        //System.out.println(logged);
 
         boolean end = false;
         sc = new Scanner(System.in);
@@ -52,7 +52,7 @@ public class Main
                     p1 = sc.nextLine();
                     System.out.print("Time (HH:MI): ");
                     p2 = sc.nextLine();
-                    System.out.println("\n" + ad.listTables(p1,p2));
+                    System.out.println(ad.listTables(p1,p2));
                     break;
                 case 2:
                     System.out.print("Table number: ");
@@ -63,7 +63,8 @@ public class Main
                     p3 = sc.nextLine();
                     System.out.print("Number of people: ");
                     p4 = sc.nextLine();
-                    System.out.println("\n" + ad.bookTable(p1,p2,p3,p4));
+                    System.out.print("Reservation : ");
+                    System.out.println(ad.bookTable(p1,p2,p3,p4));
                     break;
                 case 3:
                     System.out.println(ad.listBookings());
@@ -77,7 +78,7 @@ public class Main
                     i2 = sc.nextInt();
                     System.out.print("Quantity: ");
                     i3 = sc.nextInt();
-                    System.out.println("\n" + ad.orderMeal(i1,i2,i3));
+                    System.out.print(ad.orderMeal(i1,i2,i3));
                     break;
                 case 5:
                     System.out.println(ad.listWaiters());
@@ -92,10 +93,11 @@ public class Main
                         p2 = sc.nextLine();
                         System.out.print("Password: ");
                         p3 = sc.nextLine();
-                        System.out.println("\n" + ad.newWaiter(p1,p2,p3));
+                        System.out.println(ad.newWaiter(p1,p2,p3));
                     }
                     else
                     {
+                        System.out.println(ad.listAssignments());
                         String res = ad.selectWaiter(i1);
                         System.out.println(res);
                         if (res.equals("Waiter not found")) continue;
@@ -107,7 +109,7 @@ public class Main
                         if (i2 > 0 && i2 < 4) {
                             System.out.print(tab[i2-1] + ": ");
                             p1 = sc.nextLine();
-                            System.out.println("\n" + ad.updateWaiter(i1, i2, p1));
+                            System.out.println(ad.updateWaiter(i1, i2, p1));
                         }
                     }
                     break;
@@ -122,11 +124,11 @@ public class Main
                     sc.nextLine();
                     System.out.print("Assignment date (DD/MM/YYYY): ");
                     p1 = sc.nextLine();
-                    System.out.println("\n" + ad.assign(i1,i2, p1));
+                    System.out.println(ad.assign(i1,i2, p1));
                     break;
                 case 7:
                     System.out.println(ad.listMeals());
-                    System.out.print("Type meal number to update it or -1 to add a waiter\n>>");
+                    System.out.print("Type meal number to update it or -1 to add a meal\n>>");
                     i1 = sc.nextInt();
                     sc.nextLine();
                     if (i1 == -1)
@@ -136,10 +138,10 @@ public class Main
                         System.out.print("Type: ");
                         p2 = sc.nextLine();
                         System.out.print("Unit price: ");
-                        i1 = sc.nextInt();
-                        System.out.print("Quantity served: ");
                         i2 = sc.nextInt();
-                        System.out.println("\n" + ad.newMeal(p1,p2,i1,i2));
+                        System.out.print("Quantity served: ");
+                        i3 = sc.nextInt();
+                        System.out.println(ad.newMeal(p1,p2,i2,i3));
                     }
                     else
                     {
@@ -154,7 +156,7 @@ public class Main
                         if (i2 > 0 && i2 < 5) {
                             System.out.print(tab[i2-1] + ": ");
                             p1 = sc.nextLine();
-                            System.out.println("\n" + ad.updateMeal(i1, i2, p1));
+                            System.out.println(ad.updateMeal(i1, i2, p1));
                         }
                     }
                     break;
@@ -162,8 +164,10 @@ public class Main
                     System.out.println(ad.listBookings());
                     System.out.print("Booking number: ");
                     i1 = sc.nextInt();
-                    System.out.println(ad.bookingAmount(i1));
+                    String amount = ad.bookingAmount(i1);
+                    System.out.println("Amount: " + amount);
                     System.out.println(ad.updateBookingAmount(i1));
+                    System.out.println(ad.listBookings());
                     break;
                 case 9:
                     System.out.print("Start date (DD/MM/YYYY): ");
@@ -182,7 +186,7 @@ public class Main
                 default:
                     break;
             }
-            System.out.println("Press any key to continue...");
+            System.out.print("Press enter to continue...");
             sc.nextLine();
         }
 

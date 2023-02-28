@@ -73,7 +73,7 @@ public class SimplerJDBC
 
     public String unique(String query, Object[] params) throws SQLException
     {
-        ResultSet rs = this.resultSelect(query, new Object[]{});
+        ResultSet rs = this.resultSelect(query, params);
         rs.last();
         return rs.getString(1);
     }

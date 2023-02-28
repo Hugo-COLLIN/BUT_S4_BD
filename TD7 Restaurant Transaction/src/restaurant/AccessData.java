@@ -12,7 +12,7 @@ public class AccessData
     public String connection(String lgn, String pwd) throws SQLException, ClassNotFoundException
     {
         String url = "jdbc:oracle:thin:@charlemagne.iutnc.univ-lorraine.fr:1521:infodb";
-        return sj.loadDriver() +
+        return sj.loadDriver() + "\n" +
                 sj.connect(url, lgn, pwd);
     }
 
@@ -126,7 +126,7 @@ public class AccessData
                 "WHERE numServ = ?\n" +
                 "AND grade = 'serveur'";
         sj.modify(query, new Object[]{email, numServ});
-        return "Ok, server email updated!";
+        return "Ok, waiter email updated!";
     }
 
     public String updateWaiterName(int numServ, String name) throws SQLException
@@ -136,7 +136,7 @@ public class AccessData
                 "WHERE numServ = ?\n" +
                 "AND grade = 'serveur'";
         sj.modify(query, new Object[]{name, numServ});
-        return "Ok, server name updated!";
+        return "Ok, waiter name updated!";
     }
 
     public String updateWaiterPassword(int numServ, String password) throws SQLException
@@ -146,7 +146,7 @@ public class AccessData
                 "WHERE numServ = ?\n" +
                 "AND grade = 'serveur'";
         sj.modify(query, new Object[]{password, numServ});
-        return "Ok, server password updated!";
+        return "Ok, waiter password updated!";
     }
 
     public String newWaiter(String name, String email, String password) throws SQLException
@@ -156,7 +156,7 @@ public class AccessData
         System.out.println(numServ);
         String query = "INSERT INTO Serveur (numServ, nomServ, email, passwd, grade) VALUES (?, ?, ?, ?, 'serveur')";
         sj.modify(query, new Object[]{numServ, name, email, password});
-        return "Ok, server added!";
+        return "Ok, waiter added!";
     }
 
     private String lastWaiterNumber() throws SQLException {
@@ -175,15 +175,15 @@ public class AccessData
 
     public String assign(int numServ, int numTab, String dataff) throws SQLException
     {
-        String query = "INSERT INTO Affectation (numServ, numTab, dataff) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Affecter (numServ, numTab, dataff) VALUES (?, ?, ?)";
         sj.modify(query, new Object[]{numServ, numTab, dataff});
-        return "Ok, server assigned to a table!";
+        return "Ok, server assigned to table!";
     }
 
 
     public String listAssignments() throws SQLException
     {
-        String query = "SELECT * FROM Affectation";
+        String query = "SELECT * FROM Affecter";
         return sj.select(query, new String[]{});
     }
 
@@ -199,12 +199,12 @@ public class AccessData
         return "No meal found";
     }
 
-    public String updateMeal(int choice, int i2, String p1) throws SQLException {
+    public String updateMeal(int numPlat, int choice, String p1) throws SQLException {
         return switch (choice) {
-            case 1 -> updateMealLabel(i2, p1);
-            case 2 -> updateMealType(i2, p1);
-            case 3 -> updateMealPrice(i2, p1);
-            case 4 -> updateMealServedQuantity(i2, p1);
+            case 1 -> updateMealLabel(numPlat, p1);
+            case 2 -> updateMealType(numPlat, p1);
+            case 3 -> updateMealPrice(numPlat, p1);
+            case 4 -> updateMealServedQuantity(numPlat, p1);
             default -> "Invalid choice";
         };
     }
@@ -215,34 +215,34 @@ public class AccessData
                 "SET libelle = ?\n" +
                 "WHERE numPlat = ?";
         sj.modify(query, new Object[]{libelle, numPlat});
-        return "Ok, server email updated!";
+        return "Ok, meal libelle updated!";
     }
 
     public String updateMealType(int numPlat, String type) throws SQLException
     {
-        String query = "UPDATE Serveur\n" +
+        String query = "UPDATE Plat\n" +
                 "SET type = ?\n" +
                 "WHERE numPlat = ?";
         sj.modify(query, new Object[]{type, numPlat});
-        return "Ok, server name updated!";
+        return "Ok, meal type updated!";
     }
 
     public String updateMealPrice(int numPlat, String price) throws SQLException
     {
-        String query = "UPDATE Serveur\n" +
-                "SET passwd = ?\n" +
+        String query = "UPDATE Plat\n" +
+                "SET prixUnit = ?\n" +
                 "WHERE numPlat = ?";
         sj.modify(query, new Object[]{price, numPlat});
-        return "Ok, server password updated!";
+        return "Ok, meal unit price updated!";
     }
 
     public String updateMealServedQuantity(int numPlat, String qteservie) throws SQLException
     {
-        String query = "UPDATE Serveur\n" +
-                "SET passwd = ?\n" +
+        String query = "UPDATE Plat\n" +
+                "SET qteServie = ?\n" +
                 "WHERE numPlat = ?";
         sj.modify(query, new Object[]{qteservie, numPlat});
-        return "Ok, server password updated!";
+        return "Ok, meal served quantity updated!";
     }
 
     public String newMeal(String libelle, String type, int prixunit, int qteservie) throws SQLException
@@ -250,8 +250,8 @@ public class AccessData
         int numPlat = Integer.parseInt(lastMealNumber());
         numPlat ++;
         System.out.println(numPlat);
-        String query = "INSERT INTO Plat VALUES (?, ?, ?)";
-        sj.modify(query, new Object[]{numPlat, libelle,type, prixunit, qteservie});
+        String query = "INSERT INTO Plat VALUES (?, ?, ?, ?, ?)";
+        sj.modify(query, new Object[]{numPlat, libelle, type, prixunit, qteservie});
         return "Ok, server added!";
     }
 
@@ -264,12 +264,15 @@ public class AccessData
     public String bookingAmount(int numRes) throws SQLException
     {
         String query = """
-                SELECT sum(plat.prixUnit * commande.quantite) FROM reservation
+                SELECT sum(plat.prixUnit * commande.quantite) AS Total FROM reservation
                 INNER JOIN Commande ON Reservation.numRes = commande.numres
                 INNER JOIN Plat ON commande.numplat = plat.numPlat
                 WHERE Reservation.numRes = ?
                 """;
         return sj.unique(query, new Object[]{numRes});
+        //if (rs.next())
+            //return sj.display(rs);
+        //return null;
     }
 
     public String updateBookingAmount(int numRes) throws SQLException
