@@ -57,7 +57,7 @@ public class AccessData
         bookingNumber++;
         System.out.println(bookingNumber);
         String query = "INSERT INTO reservation (numres, numtab, datres, nbpers) VALUES (?, ?, to_date(?, 'dd/mm/yyyy hh24:mi'), ?)";
-        sj.update(query, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
+        sj.modify(query, new Object[]{bookingNumber, numTable, date + " " + time, nbPers});
         return "Ok, table booked!";
     }
 
@@ -81,7 +81,7 @@ public class AccessData
     public String orderMeal(int numRes, int numPlat, int qte) throws SQLException
     {
         String query = "INSERT INTO Commande (numRes, numPlat, quantite) VALUES (?, ?, ?)";
-        sj.update(query, new Object[]{numRes, numPlat, qte});
+        sj.modify(query, new Object[]{numRes, numPlat, qte});
         return "Ok, meal ordered!";
     }
 
@@ -105,7 +105,7 @@ public class AccessData
                 "WHERE numServ = ?";
         ResultSet rs = sj.resultSelect(query, new Object[]{numServ});
         if (rs.next())
-            return rs.getString(1) + " " + rs.getString(2);
+            return sj.display(rs);
         return "No waiter found";
     }
 
@@ -124,8 +124,8 @@ public class AccessData
         String query = "UPDATE Serveur\n" +
                 "SET email = ?\n" +
                 "WHERE numServ = ?\n" +
-                "AND grade = 'serveur';";
-        sj.update(query, new Object[]{email, numServ});
+                "AND grade = 'serveur'";
+        sj.modify(query, new Object[]{email, numServ});
         return "Ok, server email updated!";
     }
 
@@ -135,7 +135,7 @@ public class AccessData
                 "SET nomServ = ?\n" +
                 "WHERE numServ = ?\n" +
                 "AND grade = 'serveur'";
-        sj.update(query, new Object[]{name, numServ});
+        sj.modify(query, new Object[]{name, numServ});
         return "Ok, server name updated!";
     }
 
@@ -144,8 +144,8 @@ public class AccessData
         String query = "UPDATE Serveur\n" +
                 "SET passwd = ?\n" +
                 "WHERE numServ = ?\n" +
-                "AND grade = 'serveur';";
-        sj.update(query, new Object[]{password, numServ});
+                "AND grade = 'serveur'";
+        sj.modify(query, new Object[]{password, numServ});
         return "Ok, server password updated!";
     }
 
@@ -155,7 +155,7 @@ public class AccessData
         numServ++;
         System.out.println(numServ);
         String query = "INSERT INTO Serveur (numServ, nomServ, email, passwd, grade) VALUES (?, ?, ?, ?, 'serveur')";
-        sj.update(query, new Object[]{numServ, name, email, password});
+        sj.modify(query, new Object[]{numServ, name, email, password});
         return "Ok, server added!";
     }
 
@@ -176,7 +176,7 @@ public class AccessData
     public String assign(int numServ, int numTab, String dataff) throws SQLException
     {
         String query = "INSERT INTO Affectation (numServ, numTab, dataff) VALUES (?, ?, ?)";
-        sj.update(query, new Object[]{numServ, numTab, dataff});
+        sj.modify(query, new Object[]{numServ, numTab, dataff});
         return "Ok, server assigned to a table!";
     }
 
@@ -189,12 +189,32 @@ public class AccessData
 
 
     //Q3.c
+    public String selectMeal(int numPlat) throws SQLException
+    {
+        String query = "SELECT * FROM Plat\n" +
+                "WHERE numPlat = ?";
+        ResultSet rs = sj.resultSelect(query, new Object[]{numPlat});
+        if (rs.next())
+            return sj.display(rs);
+        return "No meal found";
+    }
+
+    public String updateMeal(int choice, int i2, String p1) throws SQLException {
+        return switch (choice) {
+            case 1 -> updateMealLabel(i2, p1);
+            case 2 -> updateMealType(i2, p1);
+            case 3 -> updateMealPrice(i2, p1);
+            case 4 -> updateMealServedQuantity(i2, p1);
+            default -> "Invalid choice";
+        };
+    }
+
     public String updateMealLabel(int numPlat, String libelle) throws SQLException
     {
         String query = "UPDATE Plat\n" +
                 "SET libelle = ?\n" +
                 "WHERE numPlat = ?";
-        sj.update(query, new Object[]{libelle, numPlat});
+        sj.modify(query, new Object[]{libelle, numPlat});
         return "Ok, server email updated!";
     }
 
@@ -203,7 +223,7 @@ public class AccessData
         String query = "UPDATE Serveur\n" +
                 "SET type = ?\n" +
                 "WHERE numPlat = ?";
-        sj.update(query, new Object[]{type, numPlat});
+        sj.modify(query, new Object[]{type, numPlat});
         return "Ok, server name updated!";
     }
 
@@ -212,7 +232,7 @@ public class AccessData
         String query = "UPDATE Serveur\n" +
                 "SET passwd = ?\n" +
                 "WHERE numPlat = ?";
-        sj.update(query, new Object[]{price, numPlat});
+        sj.modify(query, new Object[]{price, numPlat});
         return "Ok, server password updated!";
     }
 
@@ -221,7 +241,7 @@ public class AccessData
         String query = "UPDATE Serveur\n" +
                 "SET passwd = ?\n" +
                 "WHERE numPlat = ?";
-        sj.update(query, new Object[]{qteservie, numPlat});
+        sj.modify(query, new Object[]{qteservie, numPlat});
         return "Ok, server password updated!";
     }
 
@@ -231,7 +251,7 @@ public class AccessData
         numPlat ++;
         System.out.println(numPlat);
         String query = "INSERT INTO Plat VALUES (?, ?, ?)";
-        sj.update(query, new Object[]{numPlat, libelle,type, prixunit, qteservie});
+        sj.modify(query, new Object[]{numPlat, libelle,type, prixunit, qteservie});
         return "Ok, server added!";
     }
 
@@ -249,7 +269,7 @@ public class AccessData
                 INNER JOIN Plat ON commande.numplat = plat.numPlat
                 WHERE Reservation.numRes = ?
                 """;
-        return sj.select(query, new Object[]{numRes});
+        return sj.unique(query, new Object[]{numRes});
     }
 
     public String updateBookingAmount(int numRes) throws SQLException
@@ -259,7 +279,7 @@ public class AccessData
                 SET montcom = ?
                 WHERE Reservation.numRes = ?
                 """;
-        sj.update(query, new Object[]{bookingAmount(numRes), numRes});
+        sj.modify(query, new Object[]{bookingAmount(numRes), numRes});
         return "Ok, booking amount updated!";
     }
 
@@ -280,7 +300,7 @@ public class AccessData
     }
 
     //Q3.f
-public String listOrdersByTable(String startDate, String endDate) throws SQLException
+public String noTurnoverWaiters(String startDate, String endDate) throws SQLException
     {
         String query = """
                  SELECT serveur.nomServ FROM Serveur
@@ -296,6 +316,4 @@ public String listOrdersByTable(String startDate, String endDate) throws SQLExce
                 """;
         return sj.select(query, new Object[]{startDate, endDate});
     }
-
-
 }

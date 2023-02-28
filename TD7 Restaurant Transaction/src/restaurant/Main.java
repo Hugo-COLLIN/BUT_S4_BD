@@ -44,6 +44,9 @@ public class Main
             int i1, i2, i3, i4;
             switch (choice)
             {
+                case 0:
+                    end = true;
+                    break;
                 case 1:
                     System.out.print("Date (DD/MM/YYYY): ");
                     p1 = sc.nextLine();
@@ -107,11 +110,74 @@ public class Main
                             System.out.println("\n" + ad.updateWaiter(i1, i2, p1));
                         }
                     }
-                    System.out.println("Name: ");
-                    //System.out.println("\n" + ad.cliList2Models());
                     break;
-                case 0:
-                    end = true;
+                case 6:
+                    System.out.println(ad.listTables());
+                    System.out.print("Table number: ");
+                    i1 = sc.nextInt();
+                    sc.nextLine();
+                    System.out.println(ad.listWaiters());
+                    System.out.print("Waiter number: ");
+                    i2 = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Assignment date (DD/MM/YYYY): ");
+                    p1 = sc.nextLine();
+                    System.out.println("\n" + ad.assign(i1,i2, p1));
+                    break;
+                case 7:
+                    System.out.println(ad.listMeals());
+                    System.out.print("Type meal number to update it or -1 to add a waiter\n>>");
+                    i1 = sc.nextInt();
+                    sc.nextLine();
+                    if (i1 == -1)
+                    {
+                        System.out.print("Libelle: ");
+                        p1 = sc.nextLine();
+                        System.out.print("Type: ");
+                        p2 = sc.nextLine();
+                        System.out.print("Unit price: ");
+                        i1 = sc.nextInt();
+                        System.out.print("Quantity served: ");
+                        i2 = sc.nextInt();
+                        System.out.println("\n" + ad.newMeal(p1,p2,i1,i2));
+                    }
+                    else
+                    {
+                        String res = ad.selectMeal(i1);
+                        System.out.println(res);
+                        if (res.equals("Meal not found")) continue;
+                        System.out.print("1. Libelle\n2. Type\n3. Unit price\n4. Quantity served\n>>");
+                        i2 = sc.nextInt();
+                        sc.nextLine();
+                        String[] tab = {"Libelle", "Type", "Unit price", "Quantity served"};
+
+                        if (i2 > 0 && i2 < 5) {
+                            System.out.print(tab[i2-1] + ": ");
+                            p1 = sc.nextLine();
+                            System.out.println("\n" + ad.updateMeal(i1, i2, p1));
+                        }
+                    }
+                    break;
+                case 8:
+                    System.out.println(ad.listBookings());
+                    System.out.print("Booking number: ");
+                    i1 = sc.nextInt();
+                    System.out.println(ad.bookingAmount(i1));
+                    System.out.println(ad.updateBookingAmount(i1));
+                    break;
+                case 9:
+                    System.out.print("Start date (DD/MM/YYYY): ");
+                    p1 = sc.nextLine();
+                    System.out.print("End date (DD/MM/YYYY): ");
+                    p2 = sc.nextLine();
+                    System.out.println(ad.listOrdersByWaiter(p1,p2));
+                    break;
+                case 10:
+                    System.out.print("Start date (DD/MM/YYYY): ");
+                    p1 = sc.nextLine();
+                    System.out.print("End date (DD/MM/YYYY): ");
+                    p2 = sc.nextLine();
+                    System.out.println(ad.noTurnoverWaiters(p1,p2));
                     break;
                 default:
                     break;
