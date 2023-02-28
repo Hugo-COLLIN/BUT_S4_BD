@@ -3,7 +3,7 @@ import java.sql.*;
 
 /**
  * SimplerJDBC
- * Hugo COLLIN, 27/02/2023
+ * Hugo COLLIN, 28/02/2023
  */
 public class SimplerJDBC
 {

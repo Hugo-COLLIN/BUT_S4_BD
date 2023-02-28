@@ -1,6 +1,10 @@
 package restaurant;
 import java.sql.*;
 
+/**
+ * AccessData
+ * Hugo COLLIN, 28/02/2023
+ */
 public class AccessData
 {
     private SimplerJDBC sj;

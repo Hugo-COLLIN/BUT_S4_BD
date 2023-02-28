@@ -3,6 +3,10 @@ package restaurant;
 import java.sql.*;
 import java.util.Scanner;
 
+/**
+ * Main
+ * Hugo COLLIN, 28/02/2023
+ */
 public class Main
 {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
