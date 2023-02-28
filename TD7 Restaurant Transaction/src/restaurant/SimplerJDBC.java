@@ -38,7 +38,6 @@ public class SimplerJDBC
     {
         this.query(query, params);
         ResultSet rs = this.pst.executeQuery();
-        this.co.commit();
         return rs;
     }
 
