@@ -92,14 +92,34 @@ public class AccessData
     }
 
     //Q3.a
-    public String listServers() throws SQLException
+    public String listWaiters() throws SQLException
     {
         String query = "SELECT * FROM Serveur\n" +
                 "WHERE grade = 'serveur'";
         return sj.select(query, new String[]{});
     }
 
-    public String updateServerEmail(int numServ, String email) throws SQLException
+    public String selectWaiter(int numServ) throws SQLException
+    {
+        String query = "SELECT nomserv, email FROM Serveur\n" +
+                "WHERE numServ = ?";
+        ResultSet rs = sj.resultSelect(query, new Object[]{numServ});
+        if (rs.next())
+            return rs.getString(1) + " " + rs.getString(2);
+        return "No waiter found";
+    }
+
+    public String updateWaiter(int waiterNum, int choice, String value) throws SQLException
+    {
+        return switch (choice) {
+            case 1 -> updateWaiterName(waiterNum, value);
+            case 2 -> updateWaiterEmail(waiterNum, value);
+            case 3 -> updateWaiterPassword(waiterNum, value);
+            default -> "Invalid choice";
+        };
+    }
+
+    public String updateWaiterEmail(int numServ, String email) throws SQLException
     {
         String query = "UPDATE Serveur\n" +
                 "SET email = ?\n" +
@@ -109,17 +129,17 @@ public class AccessData
         return "Ok, server email updated!";
     }
 
-    public String updateServerName(int numServ, String name) throws SQLException
+    public String updateWaiterName(int numServ, String name) throws SQLException
     {
         String query = "UPDATE Serveur\n" +
                 "SET nomServ = ?\n" +
                 "WHERE numServ = ?\n" +
-                "AND grade = 'serveur';";
+                "AND grade = 'serveur'";
         sj.update(query, new Object[]{name, numServ});
         return "Ok, server name updated!";
     }
 
-    public String updateServerPassword(int numServ, String password) throws SQLException
+    public String updateWaiterPassword(int numServ, String password) throws SQLException
     {
         String query = "UPDATE Serveur\n" +
                 "SET passwd = ?\n" +
@@ -129,9 +149,9 @@ public class AccessData
         return "Ok, server password updated!";
     }
 
-    public String newServer(String name, String email, String password) throws SQLException
+    public String newWaiter(String name, String email, String password) throws SQLException
     {
-        int numServ = Integer.parseInt(lastServerNumber());
+        int numServ = Integer.parseInt(lastWaiterNumber());
         numServ++;
         System.out.println(numServ);
         String query = "INSERT INTO Serveur (numServ, nomServ, email, passwd, grade) VALUES (?, ?, ?, ?, 'serveur')";
@@ -139,7 +159,7 @@ public class AccessData
         return "Ok, server added!";
     }
 
-    private String lastServerNumber() throws SQLException {
+    private String lastWaiterNumber() throws SQLException {
         String query = "SELECT max(numServ) FROM Serveur";
         return sj.unique(query);
     }
@@ -160,13 +180,13 @@ public class AccessData
         return "Ok, server assigned to a table!";
     }
 
-    /*
+
     public String listAssignments() throws SQLException
     {
         String query = "SELECT * FROM Affectation";
         return sj.select(query, new String[]{});
     }
-     */
+
 
     //Q3.c
     public String updateMealLabel(int numPlat, String libelle) throws SQLException
@@ -276,4 +296,6 @@ public String listOrdersByTable(String startDate, String endDate) throws SQLExce
                 """;
         return sj.select(query, new Object[]{startDate, endDate});
     }
+
+
 }
