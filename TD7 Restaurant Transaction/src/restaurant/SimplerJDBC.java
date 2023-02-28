@@ -42,7 +42,7 @@ public class SimplerJDBC
         return rs;
     }
 
-    public String update(String query, Object[] params) throws SQLException
+    public String modify(String query, Object[] params) throws SQLException
     {
         this.query(query, params);
         this.pst.executeUpdate();
