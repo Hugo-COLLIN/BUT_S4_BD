@@ -34,6 +34,11 @@ public class SimplerJDBC
         return this.display(resultSelect(query, params));
     }
 
+    public String select(String query) throws SQLException
+    {
+        return this.select(query, new Object[]{});
+    }
+
     public ResultSet resultSelect(String query, Object[] params) throws SQLException
     {
         this.query(query, params);
@@ -49,6 +54,11 @@ public class SimplerJDBC
         return "Update done";
     }
 
+    public String modify(String query) throws SQLException
+    {
+        return this.modify(query, new Object[]{});
+    }
+
     public void query(String query, Object[] params) throws SQLException
     {
         this.pst = co.prepareStatement(query, TYPE, MODE);
@@ -56,11 +66,21 @@ public class SimplerJDBC
             this.pst.setObject(i + 1, params[i]);
     }
 
-    public String unique(String query) throws SQLException
+    public void query(String query) throws SQLException
+    {
+        this.query(query, new Object[]{});
+    }
+
+    public String unique(String query, Object[] params) throws SQLException
     {
         ResultSet rs = this.resultSelect(query, new Object[]{});
         rs.last();
         return rs.getString(1);
+    }
+
+    public String unique(String query) throws SQLException
+    {
+        return this.unique(query, new Object[]{});
     }
 
     /*
